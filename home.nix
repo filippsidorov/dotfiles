@@ -6,6 +6,7 @@
   home.username = "sidorov.filipp3";
   home.homeDirectory = "/home/sidorov.filipp3";
 
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
@@ -23,6 +24,7 @@
   home.packages = [
     pkgs.hello
     pkgs.coreutils
+    pkgs.hack-font
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -41,7 +43,8 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
+    ".config/yandex-disk/config.cfg".source = ~/yandex.disk/dotfiles/yandex-disk/config.cfg;
+
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
     # ".screenrc".source = dotfiles/screenrc;
@@ -52,6 +55,8 @@
     #   org.gradle.daemon.idletimeout=3600000
     # '';
   };
+  
+  fonts.fontconfig.enable = true;
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
@@ -70,7 +75,7 @@
   #  /etc/profiles/per-user/sidorov.filipp3/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "vim";
   };
 
   # Let Home Manager install and manage itself.

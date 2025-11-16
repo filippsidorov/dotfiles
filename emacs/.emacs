@@ -1,0 +1,332 @@
+;; Основное 
+(tool-bar-mode -1)
+(setq inhibit-startup-screen t)
+(setq inhibit-splash-screen t)
+
+(if (equal system-type 'gnu/linux)
+    (set-frame-font "Hack 14" nil t)
+  (set-frame-font "Hack 18" nil t))
+
+
+(setq-default fill-column 79) 
+;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook (lambda() (visual-line-mode t)))
+(setq org-startup-truncated 1)
+
+
+
+(use-package visual-fill-column
+  :ensure t
+  :hook (org-mode . visual-fill-column-mode))
+
+;; show vertica ruler at 79 char
+;; (add-hook 'org-mode-hook #'display-fill-column-indicator-mode)
+
+
+
+;; Dired
+(use-package dired
+  :ensure nil
+  :custom
+  (dired-listing-switches "-alh --group-directories-first"))
+
+
+;; Backup
+(setq backup-directory-alist '(("." . "~/Yandex.Disk/.org-backup")))
+(setq make-backup-files t)
+(setq auto-save-default t)
+
+(define-key minibuffer-local-completion-map "\C-s" 
+	    (lambda () (interactive) (insert " ")))
+
+
+;; Hotkeys
+
+(global-set-key "\C-cd" 'kill-whole-line)     
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c k") #'calendar)
+
+
+
+;; Markdown
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  :bind (:map markdown-mode-map
+              ("C-c C-e" . markdown-do)))
+
+;; SQL
+(require 'sql)
+(defalias 'sql-get-login 'ignore)
+
+
+
+;; Treemacs
+(use-package treemacs
+  :ensure t)
+   
+
+
+
+;; Melpa
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+
+
+
+
+
+
+
+;; Completions
+(defun my-sort-completions (completions)
+  "Sort list of completions in alphanumeric order."
+  (sort completions 'string-lessp))
+
+(setq completions-sort 'my-sort-completions)
+(setq completions-format "one-column")
+
+
+;; Ido
+(use-package ido
+  :config
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 'both))
+
+
+;; yasnippetsk
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"))
+
+(yas-global-mode 1)
+
+
+;; Org-mode
+(use-package org
+  :ensure t)
+
+(use-package ox
+  :after org)
+
+
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(setq org-agenda-start-on-weekday 1)
+(setq calendar-week-start-day 1)
+(setq org-startup-truncated nil)
+(setq org-agenda-skip-scheduled-if-done t)
+(setq org-hide-emphasis-markers t)
+(setq org-completion-use-ido t)
+(setq org-id-link-to-org-use-id 'create-if-interactive)
+
+
+
+
+
+(setq org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
+
+(setq org-todo-keywords
+      '((sequence "TODO" "CHECK" "|" "DONE" "CANCEL")))
+
+(setq org-todo-keyword-faces
+      '(("NOTE" . "#8be9fd")
+	("LINK" . "#f1fa8c")
+	("WORK" . "#50fa7b")
+	("SKIP" . "")))
+
+(setq org-reverse-note-order t)
+
+(setq org-refile-targets
+      '(
+	("~/Org/board-wb.org" :maxlevel . 2)
+	("~/Org/board.org" :maxlevel . 1)
+	("~/Org/daaa9e4c.org" :maxlevel . 1)
+	("~/Org/para.org" :maxlevel . 2)
+        ("~/Org/3-resources.org" :maxlevel . 2)
+	))
+
+
+
+(setq org-capture-templates
+     
+      '(("t" "todo" entry (file "~/Org/0-inbox.org")
+	 "** TODO %?")
+	
+	("n" "Note" entry (file "~/Org/notes.org")
+         "** %U \n%?")
+
+	("q" "Question" entry (file+headline "~/Org/board-qs.org" "Inbox")
+	 "** %?\n")
+
+	("c" "Contact" entry (file "~/Org/network.org")
+         "** %?")
+
+	("m" "mn" entry (file "~/Org/0-inbox.org")
+	 "** mn %<%Y/%m/%d> %?\nобсуждали:\n\nрешили:\n\ntodo:\n\n")))
+
+(setq org-footnote-auto-adjust t)
+
+
+(defface org-my-hash-tag-face
+  '((t :foreground "#8be9fd"))
+  "Face for custom org #tags.")
+
+(defface org-my-people-tag-face
+  '((t :foreground "#f1fa8c"))
+  "Face for custom org @tags.")
+
+(defun org-my--not-in-heading-p ()
+  "Return t if point is not in an Org heading line."
+  (save-excursion
+    (beginning-of-line)
+    (not (looking-at-p "\\*+\\s-"))))
+
+(defun org-my--add-custom-font-lock ()
+  (font-lock-add-keywords
+   nil
+   `(
+     ;; #hashtag, but not at line-start if it's a heading
+     ("\\([#][A-Za-zА-Яа-я0-9_-]+\\)"
+      (0 (when (org-my--not-in-heading-p)
+           'org-my-hash-tag-face)
+         prepend))
+     ;; @person, but not at line-start if it's a heading
+     ("\\([@][A-Za-zА-Яа-я0-9_-]+\\)"
+      (0 (when (org-my--not-in-heading-p)
+           'org-my-people-tag-face)
+         prepend))
+     )))
+
+(add-hook 'org-mode-hook #'org-my--add-custom-font-lock)
+
+
+
+
+
+
+;; Org-roam
+(setq org-roam-dailies-directory "Dailies/")
+
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-completion-everywhere t)
+  (org-roam-directory "~/Zettelkasten")
+  (org-roam-mode-sections
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            ))
+  (org-roam-capture-templates
+   '(("d" "default" plain "* ${title}\n%?"
+      :target (file+head "%<%Y%m%d%H%M%S>_${slug}.org"
+                         "#+title: ${title}\n#+date: %U\n#+filetags: %^G\n\n")
+      :unnarrowed t)))
+  (org-roam-dailies-capture-templates
+   '(("d" "default" entry "* %?"
+      :empty-lines 2
+      :target (file+head "%<%Y-%m-%d>.org"
+			 "#+title: %<%Y-%m-%d>\n#+STARTUP: show2levels\n"))
+     ))  
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert)
+	 ("C-c n r" . org-roam-node-random)
+	 ("C-c n d c" . org-roam-dailies-capture-today)
+	 ("C-c n d t" . org-roam-dailies-goto-today)
+	 ("C-c n d d" . org-roam-dailies-goto-date)
+	 ("C-c n d p" . org-roam-dailies-goto-previous-note)
+	 ("C-c n d n" . org-roam-dailies-goto-next-note)
+	 ("C-c n d b" . org-roam-buffer-display-dedicated)
+	 :map org-mode-map
+	 ("C-M-i" . completion-at-point))
+  :config
+  (org-roam-db-autosync-mode)
+  )
+
+;; org-ref
+(use-package org-ref)
+
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
+     "5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a"
+     "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0"
+     "99d1e29934b9e712651d29735dd8dcd431a651dfbe039df158aa973461af003e"
+     "8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91"
+     "e410458d3e769c33e0865971deb6e8422457fad02bf51f7862fa180ccc42c032"
+     "9a977ddae55e0e91c09952e96d614ae0be69727ea78ca145beea1aae01ac78d2" default))
+ '(dired-listing-switches "-ol")
+ '(dracula-height-doc-title 1.215)
+ '(dracula-height-title-1 1.138)
+ '(dracula-height-title-2 1.067)
+ '(org-agenda-files
+   '("~/Org/3-resources.org" "/home/filippsidorov/Org/4-archives.org"
+     "/home/filippsidorov/Org/2-areas.org"
+     "/home/filippsidorov/Yandex.Disk/Org/1-projects.org"
+     "/home/filippsidorov/Org/0-inbox.org"))
+ '(org-tags-column 0)
+ '(package-selected-packages
+   '(cmake-mode dracula-theme elfeed elgrep ivy-bibtex markdown-mode org
+		org-modern org-ref org-roam org-superstar parsebib treemacs
+		visual-fill-column yasnippet zotxt)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(scroll-bar ((t (:background "#44475A" :foreground "#F8F8F2")))))
+
+
+(add-to-list 'load-path "~/.emacs.d/org-hashtag-stats/")
+(require 'org-hashtag-stats)
+
+
+
+;; Themes
+(load-theme 'dracula t)
+
+
+
+
+
+
+;; Режим для экспорта фрагмента текста
+;; TODO: добавить очистку лишних пробелов
+(defun my-process-text-region (start end)
+  (interactive "r")
+  (let ((selected-text (buffer-substring-no-properties start end))
+        (processed-text ""))
+    
+    (setq processed-text selected-text)
+    (setq processed-text (replace-regexp-in-string "\n" " " processed-text))
+
+    (with-current-buffer (get-buffer-create "*Processed Text*")
+      (erase-buffer)
+      (insert processed-text)
+      (pop-to-buffer (current-buffer)))))
+
+
+
+(define-minor-mode export-text-region-mode
+  "Simple minor mode for processing selected text region."
+  :init-value nil
+  :lighter " xpReg"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c e t") #'my-process-text-region)
+            map))
+
+(provide 'export-text-region-mode)
+
+
+
+
