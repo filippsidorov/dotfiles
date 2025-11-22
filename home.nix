@@ -1,5 +1,10 @@
 { config, pkgs, ... }:
 
+let
+  nixGL = import (builtins.fetchTarball {
+    url = "https://github.com/nix-community/nixGL/archive/main.tar.gz";
+  }) {};
+in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -18,6 +23,25 @@
 
   home.enableNixpkgsReleaseCheck = false;
 
+  dconf.settings = {
+    # Disable default screenshot key
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      screenshot = [];
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+      ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      name = "Flameshot";
+      command = "flameshot gui";
+      binding = "Print";
+    };
+  };
+  services.flameshot = {
+    enable = true;
+  };
+
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -25,6 +49,8 @@
     pkgs.hello
     pkgs.coreutils
     pkgs.hack-font
+    pkgs.telegram-desktop
+    nixGL.nixGLIntel
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -43,7 +69,11 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    ".config/yandex-disk/config.cfg".source = ~/yandex.disk/dotfiles/yandex-disk/config.cfg;
+    ".config/yandex-disk/config.cfg".source = ~/dotfiles/yandex-disk/config.cfg;
+    "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
+    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
+    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
+    "/etc/gdm3/custom.conf".source = ~/dotfiles/gdm3/custom.conf;
 
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.

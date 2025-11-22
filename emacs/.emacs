@@ -3,6 +3,10 @@
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
 
+;; не спрашивать про симлинки на файлы под гитом
+(setq vc-follow-symlinks t) 
+
+
 (if (equal system-type 'gnu/linux)
     (set-frame-font "Hack 14" nil t)
   (set-frame-font "Hack 18" nil t))
@@ -41,7 +45,6 @@
 
 
 ;; Hotkeys
-
 (global-set-key "\C-cd" 'kill-whole-line)     
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c k") #'calendar)
@@ -74,9 +77,6 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
-
-
-
 
 
 
@@ -204,10 +204,6 @@
 (add-hook 'org-mode-hook #'org-my--add-custom-font-lock)
 
 
-
-
-
-
 ;; Org-roam
 (setq org-roam-dailies-directory "Dailies/")
 
@@ -247,8 +243,6 @@
   (org-roam-db-autosync-mode)
   )
 
-;; org-ref
-(use-package org-ref)
 
 
 
@@ -276,8 +270,8 @@
      "/home/filippsidorov/Org/0-inbox.org"))
  '(org-tags-column 0)
  '(package-selected-packages
-   '(cmake-mode dracula-theme elfeed elgrep ivy-bibtex markdown-mode org
-		org-modern org-ref org-roam org-superstar parsebib treemacs
+   '(cmake-mode dracula-theme elfeed elgrep markdown-mode org
+		org-modern org-ref org-roam org-superstar treemacs
 		visual-fill-column yasnippet zotxt)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -294,9 +288,6 @@
 
 ;; Themes
 (load-theme 'dracula t)
-
-
-
 
 
 
