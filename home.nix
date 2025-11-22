@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   nixGL = import (builtins.fetchTarball {
@@ -11,6 +11,14 @@ in
   home.username = "sidorov.filipp3";
   home.homeDirectory = "/home/sidorov.filipp3";
 
+  # Simple autostart - runs your script on login
+  xdg.configFile."autostart/setup-keybinding.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Setup Flameshot Keybinding
+    Exec=${config.home.homeDirectory}/dotfiles/setup-gnome-keybindings.sh
+    X-GNOME-Autostart-enabled=true
+  '';
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -23,25 +31,6 @@ in
 
   home.enableNixpkgsReleaseCheck = false;
 
-  dconf.settings = {
-    # Disable default screenshot key
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      screenshot = [];
-      custom-keybindings = [
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-      ];
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      name = "Flameshot";
-      command = "flameshot gui";
-      binding = "Print";
-    };
-  };
-  services.flameshot = {
-    enable = true;
-  };
-
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -51,6 +40,9 @@ in
     pkgs.hack-font
     pkgs.telegram-desktop
     nixGL.nixGLIntel
+    pkgs.flameshot
+    pkgs.strace
+
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -66,6 +58,8 @@ in
     # '')
   ];
 
+  
+
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
@@ -73,17 +67,9 @@ in
     "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
     ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
+    "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home.nix;
     "/etc/gdm3/custom.conf".source = ~/dotfiles/gdm3/custom.conf;
 
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
   };
   
   fonts.fontconfig.enable = true;
@@ -106,7 +92,9 @@ in
   #
   home.sessionVariables = {
     EDITOR = "vim";
+    FLAMESHOT = "flameshot";
   };
+
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
