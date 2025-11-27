@@ -27,8 +27,6 @@
 ;; (add-hook 'org-mode-hook #'display-fill-column-indicator-mode)
 
 
-
-;; Dired
 (use-package dired
   :ensure nil
   :custom
@@ -48,7 +46,6 @@
 (global-set-key "\C-cd" 'kill-whole-line)     
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c k") #'calendar)
-
 
 
 ;; Markdown
@@ -252,27 +249,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
-     "5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a"
-     "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0"
-     "99d1e29934b9e712651d29735dd8dcd431a651dfbe039df158aa973461af003e"
-     "8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91"
-     "e410458d3e769c33e0865971deb6e8422457fad02bf51f7862fa180ccc42c032"
-     "9a977ddae55e0e91c09952e96d614ae0be69727ea78ca145beea1aae01ac78d2" default))
+   '("603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961" "5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a" "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0" "99d1e29934b9e712651d29735dd8dcd431a651dfbe039df158aa973461af003e" "8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91" "e410458d3e769c33e0865971deb6e8422457fad02bf51f7862fa180ccc42c032" "9a977ddae55e0e91c09952e96d614ae0be69727ea78ca145beea1aae01ac78d2" default))
  '(dired-listing-switches "-ol")
  '(dracula-height-doc-title 1.215)
  '(dracula-height-title-1 1.138)
  '(dracula-height-title-2 1.067)
  '(org-agenda-files
-   '("~/Org/3-resources.org" "/home/filippsidorov/Org/4-archives.org"
-     "/home/filippsidorov/Org/2-areas.org"
-     "/home/filippsidorov/Yandex.Disk/Org/1-projects.org"
-     "/home/filippsidorov/Org/0-inbox.org"))
+   '("~/Org/3-resources.org" "/home/filippsidorov/Org/4-archives.org" "/home/filippsidorov/Org/2-areas.org" "/home/filippsidorov/Yandex.Disk/Org/1-projects.org" "/home/filippsidorov/Org/0-inbox.org"))
  '(org-tags-column 0)
  '(package-selected-packages
-   '(cmake-mode dracula-theme elfeed elgrep markdown-mode org
-		org-modern org-ref org-roam org-superstar treemacs
-		visual-fill-column yasnippet zotxt)))
+   '(vterm cmake-mode dracula-theme elfeed elgrep markdown-mode org org-modern org-ref org-roam org-superstar treemacs visual-fill-column yasnippet zotxt)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

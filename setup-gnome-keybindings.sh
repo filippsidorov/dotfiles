@@ -47,7 +47,7 @@ fi
 
 # Set the name, command, and binding for Flameshot
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$CUSTOM_KEY name 'Flameshot'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$CUSTOM_KEY command 'strace -e none flameshot gui'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$CUSTOM_KEY command 'sh -c "flameshot gui --raw | wl-copy"'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$CUSTOM_KEY binding 'Print'
 
 echo "Flameshot Print Screen keybinding applied."

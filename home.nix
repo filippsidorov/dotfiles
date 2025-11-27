@@ -1,10 +1,5 @@
 { config, pkgs, lib, ... }:
 
-let
-  nixGL = import (builtins.fetchTarball {
-    url = "https://github.com/nix-community/nixGL/archive/main.tar.gz";
-  }) {};
-in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -20,6 +15,20 @@ in
     X-GNOME-Autostart-enabled=true
   '';
 
+  programs.bash = {
+    enable = true;
+    enableCompletion = false;  # Disable to avoid 'have' errors
+    shellAliases = {
+      ls = "ls --color=auto";
+    };
+    bashrcExtra = ''
+      # Load dircolors if available
+      if command -v dircolors > /dev/null; then
+        eval "$(dircolors)"
+      fi
+    '';
+  };
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
@@ -30,18 +39,76 @@ in
   home.stateVersion = "25.05"; # Please read the comment before changing.
 
   home.enableNixpkgsReleaseCheck = false;
+  
+  services.nextcloud-client = {
+    enable = true;
+    startInBackground = true;
+  };
+
+  systemd.user.services."gnome-terminal-dracula" = {
+    Unit = {
+      Description = "Apply Dracula theme to GNOME Terminal profile";
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${config.xdg.configHome}/gnome-terminal-dracula.sh";
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
+
+  home.file.".config/gnome-terminal-dracula.sh" = {
+    text = ''
+    #!/usr/bin/env bash
+    set -e
+    # your script body here (exactly what you pasted)
+    echo "Configuring GNOME Terminal..."
+
+    # Get the default profile UUID
+    PROFILE_UUID=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d \')
+
+    echo "Using profile: $PROFILE_UUID"
+
+    # Dracula color palette
+    DRACULA_PALETTE="['#21222c', '#ff5555', '#50fa7b', '#f1fa8c', '#bd93f9', '#ff79c6', '#8be9fd', '#f8f8f2', '#6272a4', '#ff6e6e', '#69ff94', '#ffffa5', '#d6acff', '#ff92df', '#a4ffff', '#ffffff']"
+    DRACULA_BG='#282a36'
+    DRACULA_FG='#f8f8f2'
+
+    # Set font to Hack with size 14
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ use-system-font false
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ font 'Hack 14'
+
+    # Apply Dracula theme colors
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ use-theme-colors false
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ background-color "$DRACULA_BG"
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ foreground-color "$DRACULA_FG"
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ palette "$DRACULA_PALETTE"
+
+    # Optional: Enable bold colors
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE_UUID/ bold-color-same-as-fg true
+
+    echo "✓ Font set to Hack 14"
+    echo "✓ Dracula theme colors applied"
+    echo "Configuration complete! Restart your terminal to see the changes."
+
+   '';
+    executable = true;
+  };
 
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
-    pkgs.hello
-    pkgs.coreutils
-    pkgs.hack-font
-    pkgs.telegram-desktop
-    nixGL.nixGLIntel
-    pkgs.flameshot
-    pkgs.strace
+  home.packages = with pkgs; [
+    hello
+    coreutils
+    hack-font
+    telegram-desktop
+    flameshot
+    strace
+    wl-clipboard 
+    nextcloud-client
 
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
@@ -68,7 +135,6 @@ in
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
     ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home.nix;
-    "/etc/gdm3/custom.conf".source = ~/dotfiles/gdm3/custom.conf;
 
   };
   
