@@ -109,6 +109,7 @@
     strace
     wl-clipboard 
     nextcloud-client
+    libreoffice
 
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
@@ -159,6 +160,8 @@
   home.sessionVariables = {
     EDITOR = "vim";
     FLAMESHOT = "flameshot";
+    HOME = "/home/sidorov.filipp3";
+    XDG_CONFIG_HOME = "$HOME/.config";
   };
 
 
