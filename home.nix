@@ -97,6 +97,11 @@
     executable = true;
   };
 
+  programs.emacs = {
+    enable = false;
+
+  };
+
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -110,7 +115,14 @@
     wl-clipboard 
     nextcloud-client
     libreoffice
+    tree
+    htop
+    ollama
 
+    # Simple Emacs wrapper
+    (writeShellScriptBin "emacs" ''
+      exec ${emacs}/bin/emacs --user "" "$@"
+    '')
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -126,7 +138,31 @@
     # '')
   ];
 
-  
+
+  # Ollama - Local LLM inference server
+  # Runs as a systemd user service managed by home-manager
+  # Provides OpenAI-compatible API on localhost:11434
+  services.ollama = {
+    enable = true;
+    
+    # Set environment variables for the systemd service
+    environmentVariables = {
+      OLLAMA_MAX_LOADED_MODELS = "1";
+      OLLAMA_KEEP_ALIVE = "5m";
+      OLLAMA_HOST = "0.0.0.0:11434";
+      
+      # Additional useful settings for network timeouts
+      OLLAMA_NUM_PARALLEL = "4";
+      OLLAMA_MAX_QUEUE = "512";
+      
+      # Optional: Set custom models directory
+      # OLLAMA_MODELS = "/home/yourusername/.ollama/models";
+    };
+    
+    # Optional: specify which models to load
+    # models = [ "/path/to/model" ];
+  };
+ 
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -163,6 +199,8 @@
     HOME = "/home/sidorov.filipp3";
     XDG_CONFIG_HOME = "$HOME/.config";
   };
+
+
 
 
   # Let Home Manager install and manage itself.
