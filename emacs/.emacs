@@ -22,6 +22,16 @@
 
 
 
+;; restclient
+(use-package restclient
+  :ensure t
+  :mode (("\\.http\\'" . restclient-mode)
+         ("\\.rest\\'" . restclient-mode))
+  :config
+  (setq restclient-same-buffer-response t)
+  (setq restclient-same-buffer-response-name "*HTTP Response*"))
+
+
 
 (use-package visual-fill-column
   :ensure t
@@ -335,8 +345,8 @@
  '(package-selected-packages
    '(auctex dracula-theme ellama fontaine git-commit gptel ivy-bibtex
 	    kaolin-themes logos magit markdown-mode modus-themes org-pomodoro
-	    org-ref org-roam pomm spacious-padding treemacs visual-fill-column
-	    vterm wc-mode yasnippet zotxt)))
+	    org-ref org-roam pomm restclient spacious-padding treemacs
+	    visual-fill-column vterm wc-mode yasnippet zotxt)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
