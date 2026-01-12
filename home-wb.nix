@@ -1,3 +1,5 @@
+# home-wb.nix
+
 { config, pkgs, lib, ... }:
 
 {
@@ -172,7 +174,7 @@
     "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
     ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
-    "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home.nix;
+    "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
     "Code".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/3.Resources/code; 
 
   };

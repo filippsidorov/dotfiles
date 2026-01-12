@@ -7,7 +7,8 @@
 (setq inhibit-splash-screen t)
 
 ;; не спрашивать про симлинки на файлы под гитом
-(setq vc-follow-symlinks t) 
+(setq vc-follow-symlinks t)
+
 
 
 (if (equal system-type 'gnu/linux)
@@ -41,6 +42,7 @@
 ;; (add-hook 'org-mode-hook #'display-fill-column-indicator-mode)
 
 
+
 ;; gptel - LLM Integration for Emacs with Ollama
 (use-package gptel
   :ensure t
@@ -54,18 +56,28 @@
           :host "localhost:11434"
           :stream t
           :models '(qwen2.5:7b
-		    deepseek-v3.2:cloud 
-		    qwen3:4b
-		    qwen3-coder:30b
+                    deepseek-v3.2:cloud
+                    qwen3-coder:480b-cloud
+                    qwen3:4b
+                    qwen3-coder:30b
                     qwen2.5-coder:7b3
                     qwen2.5:3b
-		    qwen3:14b)))
+                    qwen3:14b))
+        ;; Disable reasoning output by default
+        gptel-include-reasoning nil
+        ;; Org-mode: each heading is a separate conversation
+        gptel-org-branching-context nil
+        ;; Follow LLM output as it generates
+        gptel-auto-scroll t))
+
+
   
-  ;; Org-mode: each heading is a separate conversation
-  (setq gptel-org-branching-context t)
   
   ;; Follow LLM output as it generates
-  (setq gptel-auto-scroll t))
+(setq gptel-auto-scroll t)
+
+
+
 
 
 (use-package llm
@@ -75,27 +87,7 @@
   :ensure t
   :after llm  ; Load after llm is available
   :config
-  (require 'llm-ollama)
-)
-  
-;; Advanced configuration with multiple specialized models
-(setq ellama-provider
-      (make-llm-ollama
-       :chat-model "qwen2.5:7b"
-       :embedding-model "nomic-embed-text"
-       :default-chat-non-standard-params '(("num_ctx" . 8192))))
-
-(setq ellama-coding-provider
-      (make-llm-ollama
-       :chat-model "qwen2.5-coder:7b"
-       :embedding-model "nomic-embed-text"
-       :default-chat-non-standard-params '(("num_ctx" . 32768))))
-
-(setq ellama-summarization-provider
-      (make-llm-ollama
-       :chat-model "qwen2.5:3b"
-       :embedding-model "nomic-embed-text"
-       :default-chat-non-standard-params '(("num_ctx" . 32768))))
+  (require 'llm-ollama))
 
 
 ;; yasnippet
@@ -112,6 +104,7 @@
   :ensure nil
   :custom
   (dired-listing-switches "-alh --group-directories-first"))
+
 
 
 ;; Backup
@@ -143,11 +136,6 @@
 
 
 
-;; Treemacs
-(use-package treemacs
-  :ensure t)
-   
-
 ;; Package archives
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -172,7 +160,6 @@
   (setq ido-enable-flex-matching t)
   (setq ido-everywhere t)
   (ido-mode 'both))
-
 
 
 
@@ -217,9 +204,14 @@
 	("~/Org/board.org" :maxlevel . 1)
 	("~/Org/daaa9e4c.org" :maxlevel . 1)
 	("~/Org/para.org" :maxlevel . 2)
+	("~/Org/threads.org" :maxlevel . 2)
         ("~/Org/3-resources.org" :maxlevel . 2)
 	))
 
+(defun my/sentence-case (str)
+  "Convert STR to sentence case: capitalize first letter, lowercase the rest."
+  (concat (upcase (substring str 0 1))
+          (substring str 1)))
 
 
 (setq org-capture-templates
@@ -228,8 +220,17 @@
 	 "** %?"
 	 :prepend t
 	 )
-     
-	
+
+	 ("w" "WB Backlog" entry (file+headline "~/Org/board-wb.org" "Backlog")
+          "** %(my/sentence-case \"%i\") %?"
+	  :prepend t
+	  )
+	 
+	 ("d" "WB Doing" entry (file+headline "~/Org/board-wb.org" "Doing")
+          "** %(my/sentence-case \"%i\") %?"
+	  :prepend t
+	  )
+
 	("n" "Note" entry (file "~/Org/notes.org")
          "** %U \n%?")
 
@@ -264,7 +265,7 @@
    nil
    `(
      ;; #hashtag, but not at line-start if it's a heading
-     ("\\([#][A-Za-zА-Яа-я0-9_-]+\\)"
+     ("\\([#][A-Za-zА-Яа-я0-9_-=]+\\)"
       (0 (when (org-my--not-in-heading-p)
            'org-my-hash-tag-face)
          prepend))
@@ -346,7 +347,7 @@
    '(auctex dracula-theme ellama fontaine git-commit gptel ivy-bibtex
 	    kaolin-themes logos magit markdown-mode modus-themes org-pomodoro
 	    org-ref org-roam pomm restclient spacious-padding treemacs
-	    visual-fill-column vterm wc-mode yasnippet zotxt)))
+	    visual-fill-column wc-mode yasnippet zotxt)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
