@@ -227,6 +227,7 @@
     "ghq".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/ghq;
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles/home-wb.nix;
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles/emacs/.emacs;
+    "dotfiles".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles;
     ".config/yandex-disk/config.cfg".source = ~/ghq/github.com/filippsidorov/dotfiles/yandex-disk/config.cfg;
   };
   
