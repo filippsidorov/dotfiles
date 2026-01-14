@@ -219,13 +219,15 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    ".config/yandex-disk/config.cfg".source = ~/dotfiles/yandex-disk/config.cfg;
-    "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
-    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
-    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
-    "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
-    "Code".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/3.Resources/code; 
 
+    "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
+
+    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
+
+    "ghq".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/ghq;
+    "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles/home-wb.nix;
+    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles/emacs/.emacs;
+    ".config/yandex-disk/config.cfg".source = ~/ghq/github.com/filippsidorov/dotfiles/yandex-disk/config.cfg;
   };
   
   fonts.fontconfig.enable = true;
