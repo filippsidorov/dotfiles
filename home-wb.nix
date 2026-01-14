@@ -143,6 +143,7 @@
           eDP-1 = {
             enable = true;
             mode = "1920x1200";
+            primary = true;
             position = "0x1440";
             rate = "60.00";
           };
