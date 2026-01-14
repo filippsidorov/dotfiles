@@ -105,6 +105,53 @@
   };
 
 
+  programs.autorandr = {
+    enable = true;
+    
+    profiles = {
+      "mobile" = {
+        fingerprint = {
+          eDP-1 = "00ffffffffffff000e6f131400000000001e0104a51e137803c5f5a3554c9b230c4f5400000001010101010101010101010101010101353c80a070b02340302036002ebd10000018000000fd00303c4a4a0f010a202020202020000000fe0043534f542054330a2020202020000000fe004d4e453030374a41312d320a2000ad
+";
+        };
+        config = {
+          eDP-1 = {
+            enable = true;
+            primary = true;
+            mode = "1920x1200";
+            position = "0x0";
+            rate = "60.00";
+          };
+        };
+      };
+      
+      "work" = {
+        fingerprint = {
+          eDP-1 = "00ffffffffffff000e6f131400000000001e0104a51e137803c5f5a3554c9b230c4f5400000001010101010101010101010101010101353c80a070b02340302036002ebd10000018000000fd00303c4a4a0f010a202020202020000000fe0043534f542054330a2020202020000000fe004d4e453030374a41312d320a2000ad
+";
+          DP-1 = "00ffffffffffff001e6d507782d6010001220104b5462878fa7ba1ae4f44a9260c5054210800d1c061400101010101010101010101014dd000a0f0703e8030203500b9882100001a000000fd00283c1e873c000a202020202020000000fc004c472048445220344b0a202020000000ff003430314e544456334a3435300a01ec02031f7223090707830100004401030410e2006ae305c000e606050159595204740030f2705a80b0588a00b9882100001e565e00a0a0a0295030203500b9882100001a1a3680a070381f402a263500b9882100001a000000000000000000000000000000000000000000000000000000000000000000000000000000000000ea
+";
+        };
+        config = {
+          DP-1 = {
+            enable = true;
+            primary = true;
+            mode = "2560x1440";
+            position = "0x0";
+            rate = "60.00";
+          };
+          eDP-1 = {
+            enable = true;
+            mode = "1920x1200";
+            position = "0x1440";
+            rate = "60.00";
+          };
+        };
+      };
+    };
+  };
+
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -205,7 +252,9 @@
   };
 
 
-
+  services.autorandr = {
+    enable = true;
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
