@@ -156,19 +156,20 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    hello
-    coreutils
-    hack-font
-    telegram-desktop
-    flameshot
-    strace
-    wl-clipboard 
-    nextcloud-client
-    libreoffice
-    tree
-    htop
-    ollama
-    noisetorch
+    hello  # Simple test program for Nix installation verification
+    coreutils  # GNU core utilities (ls, cat, etc.)
+    tree  # Directory tree visualization
+    htop  # Interactive process viewer
+    strace  # System call tracer for debugging
+    hack-font  # Monospace font for coding
+    telegram-desktop  # Telegram messaging client
+    flameshot  # Screenshot tool with annotation
+    libreoffice  # Office suite for documents/spreadsheets
+    nextcloud-client  # Cloud storage sync client
+    wl-clipboard  # Command-line clipboard utilities for Wayland (wl-copy/wl-paste)
+    ollama  # Local LLM runner for AI models
+    noisetorch  # Real-time noise suppression for microphone
+    ghq # Remote repository management made easy
 
     # Simple Emacs wrapper
     (writeShellScriptBin "emacs" ''
