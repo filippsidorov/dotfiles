@@ -170,7 +170,7 @@
     ollama  # Local LLM runner for AI models
     noisetorch  # Real-time noise suppression for microphone
     ghq # Remote repository management made easy
-
+    flatpak # The future of app Linux
     # Simple Emacs wrapper
     (writeShellScriptBin "emacs" ''
       exec ${emacs}/bin/emacs --user "" "$@"
@@ -215,6 +215,7 @@
     # models = [ "/path/to/model" ];
   };
  
+
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
