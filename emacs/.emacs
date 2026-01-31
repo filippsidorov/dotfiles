@@ -1,3 +1,4 @@
+
 ;; Основное 
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -48,6 +49,12 @@
   :ensure t
   :bind (("C-c g" . gptel-send)
          ("C-c G" . gptel-menu))
+  :custom
+   (gptel-directives
+   '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely. Use org markup syntax where needed.")
+     (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+     ;; Add other custom directives here
+     ))
   :config
   ;; Connect to local Ollama instance
   (setq gptel-model 'deepseek-v3.2:cloud 
@@ -201,9 +208,8 @@
 (setq org-refile-targets
       '(
 	("~/Org/board-wb.org" :maxlevel . 2)
-	("~/Org/board.org" :maxlevel . 1)
 	("~/Org/daaa9e4c.org" :maxlevel . 1)
-	("~/Org/para.org" :maxlevel . 2)
+	("~/Org/para.org" :maxlevel . 3)
 	("~/Org/threads.org" :maxlevel . 2)
         ("~/Org/3-resources.org" :maxlevel . 2)
 	))
@@ -224,6 +230,11 @@
 	 ("w" "WB Backlog" entry (file+headline "~/Org/board-wb.org" "Backlog")
           "** %(my/sentence-case \"%i\") %?"
 	  :prepend t
+	  
+	  )
+	 ("s" "SQL" entry (file+headline "~/Org/sql.org" "SQL")
+          "** %?"
+	  :prepend t
 	  )
 	 
 	 ("d" "WB Doing" entry (file+headline "~/Org/board-wb.org" "Doing")
@@ -231,8 +242,13 @@
 	  :prepend t
 	  )
 
+	 ("r" "Write or die" entry (file+headline "~/Org/wod.org" "WOD")
+          "** %<%Y-%m-%d %H:%M> \n%?"
+	  :prepend t
+	  )
+
 	("n" "Note" entry (file "~/Org/notes.org")
-         "** %U \n%?")
+         "** %<%Y-%m-%d %H:%M> \n%?")
 
 	("q" "Question" entry (file+headline "~/Org/board-qs.org" "Inbox")
 	 "** %?\n")

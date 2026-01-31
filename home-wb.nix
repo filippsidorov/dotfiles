@@ -5,8 +5,10 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "sidorov.filipp3";
-  home.homeDirectory = "/home/sidorov.filipp3";
+  home.username = builtins.getEnv "USER";
+  home.homeDirectory = builtins.getEnv "HOME";
+
+
 
   # Simple autostart - runs your script on login
   xdg.configFile."autostart/setup-keybinding.desktop".text = ''
@@ -170,6 +172,8 @@
     ollama  # Local LLM runner for AI models
     noisetorch  # Real-time noise suppression for microphone
     ghq # Remote repository management made easy
+    dbeaver-bin
+    focuswriter
 
     # Simple Emacs wrapper
     (writeShellScriptBin "emacs" ''
@@ -189,6 +193,7 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
+
 
 
   # Ollama - Local LLM inference server
@@ -230,6 +235,7 @@
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles/emacs/.emacs;
     "dotfiles".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/dotfiles;
     ".config/yandex-disk/config.cfg".source = ~/ghq/github.com/filippsidorov/dotfiles/yandex-disk/config.cfg;
+    "FocusWriter".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/FocusWriter;
   };
   
   fonts.fontconfig.enable = true;
