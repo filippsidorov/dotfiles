@@ -279,13 +279,11 @@
   # plain files is through 'home.file'.
   home.file = {
 
-    "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
 
     ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
 
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
-    ".config/yandex-disk/config.cfg".source = ~/dotfiles/yandex-disk/config.cfg;
     "FocusWriter".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/focuswriter;
   };
   
