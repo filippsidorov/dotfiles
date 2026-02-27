@@ -3,8 +3,9 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "sidorov.filipp3";
-  home.homeDirectory = "/home/sidorov.filipp3";
+  home.username = builtins.getEnv "USER";
+  home.homeDirectory = builtins.getEnv "HOME";
+
 
   # Simple autostart - runs your script on login
   xdg.configFile."autostart/setup-keybinding.desktop".text = ''
@@ -29,6 +30,7 @@
     '';
   };
 
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
@@ -40,10 +42,6 @@
 
   home.enableNixpkgsReleaseCheck = false;
   
-  services.nextcloud-client = {
-    enable = true;
-    startInBackground = true;
-  };
 
   systemd.user.services."gnome-terminal-dracula" = {
     Unit = {
@@ -111,14 +109,22 @@
     hack-font
     telegram-desktop
     flameshot
-    strace
-    wl-clipboard 
-    nextcloud-client
     libreoffice
     tree
     htop
     ollama
     noisetorch
+    focuswriter
+    git-sync
+    hunspell
+    hunspellDicts.ru_RU
+    eb-garamond
+    gimp
+    nodejs
+    (writeShellScriptBin "codex" ''
+      export PATH="${pkgs.nodejs_20}/bin:$PATH"
+      npx @openai/codex "$@"
+    '')
 
     # Simple Emacs wrapper
     (writeShellScriptBin "emacs" ''
@@ -168,13 +174,55 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    ".config/yandex-disk/config.cfg".source = ~/dotfiles/yandex-disk/config.cfg;
-    "Org".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/Org;
-    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
-    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home.nix;
-    "Code".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/3.Resources/code; 
 
+  };
+
+
+  services.syncthing = {
+    enable = true;
+  
+    # Override settings to prevent manual changes from persisting
+    overrideDevices = true;  # default: true
+    overrideFolders = true;  # default: true
+  
+    # Configure devices
+    settings = {
+      devices = {
+        "xiaomi-14t" = {
+          id = "D3VKOF2-5NGTXJM-I23JDTV-XV2ZRXL-JMSNNPA-W6LOL6F-PE3TU2S-G6JKNQ4";  # Get from Android app
+          # Optional: specify addresses
+          # addresses = [ "tcp://192.168.1.100:22000" ];
+        };
+      };
+  
+      # Configure folders
+      folders = {
+        "Org" = {
+          path = "~/Org";
+          id = "org";
+          devices = [ "xiaomi-14t" ];
+          # Optional folder type
+          # type = "sendreceive";  # or "sendonly", "receiveonly"
+        };
+        "PARA" = {
+          path = "~/PARA";
+          id = "para";
+          devices = [ "xiaomi-14t" ];
+          # Optional folder type
+          # type = "sendreceive";  # or "sendonly", "receiveonly"
+        };
+      };
+  
+      # Optional: global options
+      options = {
+        urAccepted = -1;  # Disable usage reporting prompt
+        localAnnounceEnabled = true;
+        relaysEnabled = true;
+        globalAnnounceEnabled = false;
+
+      };
+    };
   };
   
   fonts.fontconfig.enable = true;
@@ -198,8 +246,9 @@
   home.sessionVariables = {
     EDITOR = "vim";
     FLAMESHOT = "flameshot";
-    HOME = "/home/sidorov.filipp3";
+    HOME = "/home/filippsidorov";
     XDG_CONFIG_HOME = "$HOME/.config";
+    OPENAI_API_KEY = "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";  # replace or use sops-nix
   };
 
 
