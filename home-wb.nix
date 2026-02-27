@@ -158,6 +158,8 @@
   };
 
 
+
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -284,7 +286,6 @@
 
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
     ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
-    "FocusWriter".source = config.lib.file.mkOutOfStoreSymlink ~/ghq/github.com/filippsidorov/focuswriter;
   };
   
   fonts.fontconfig.enable = true;
