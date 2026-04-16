@@ -282,8 +282,6 @@
   home.file = {
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
     "dotfiles".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles;
-    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
-    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
   };
   
   fonts.fontconfig.enable = true;
