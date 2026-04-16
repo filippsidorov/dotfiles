@@ -305,6 +305,7 @@
   # plain files is through 'home.file'.
   home.file = {
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
+    "dotfiles".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles;
   };
   
   fonts.fontconfig.enable = true;
