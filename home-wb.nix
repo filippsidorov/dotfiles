@@ -13,6 +13,9 @@
     time = "en_GB.UTF-8";  # British English uses Monday as first day
   };
 
+
+
+
   # Simple autostart - runs your script on login
   xdg.configFile."autostart/setup-keybinding.desktop".text = ''
     [Desktop Entry]
@@ -33,11 +36,15 @@
       if command -v dircolors > /dev/null; then
         eval "$(dircolors)"
       fi
+     
+      # to avoid errors dbt auth python env 
+      export PYTHON_KEYRING_BACKEND=keyrings.alt.file.PlaintextKeyring
+
     '';
   };
 
   # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
+  # compatible with. This helps avoid breakage when a new Home Managerrelease
   # introduces backwards incompatible changes.
   #
   # You should not change this value, even if you update Home Manager. If you do
@@ -158,7 +165,7 @@
   };
 
 
-
+  nixpkgs.config.allowUnfree = true;
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -180,6 +187,7 @@
     dbeaver-bin
     focuswriter
 
+
     # Simple Emacs wrapper
     (writeShellScriptBin "emacs" ''
       exec ${emacs}/bin/emacs --user "" "$@"
@@ -198,6 +206,8 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
+
+
 
   services.syncthing = {
     enable = true;
@@ -225,13 +235,27 @@
           # Optional folder type
           # type = "sendreceive";  # or "sendonly", "receiveonly"
         };
+        "PARA" = {
+          path = "~/PARA";
+          id = "para";
+          devices = [ "xiaomi-14t" ];
+          # Optional folder type
+          # type = "sendreceive";  # or "sendonly", "receiveonly"
+        };
+        ".emacs.d" = {
+          path = "~/.emacs.d";
+          id = "emacs-d";
+          devices = [ "xiaomi-14t" ];
+          # Optional folder type
+          # type = "sendreceive";  # or "sendonly", "receiveonly"
+        };
       };
   
       # Optional: global options
       options = {
         urAccepted = -1;  # Disable usage reporting prompt
         localAnnounceEnabled = true;
-        relaysEnabled = false;
+        relaysEnabled = true;
         globalAnnounceEnabled = false;
 
       };
@@ -280,12 +304,7 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-
-
-    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
-
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
-    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
   };
   
   fonts.fontconfig.enable = true;
