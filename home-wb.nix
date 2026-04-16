@@ -8,7 +8,10 @@
   home.username = builtins.getEnv "USER";
   home.homeDirectory = builtins.getEnv "HOME";
 
-
+  home.language = {
+    base = "en_US.UTF-8";  # Your main locale
+    time = "en_GB.UTF-8";  # British English uses Monday as first day
+  };
 
   # Simple autostart - runs your script on login
   xdg.configFile."autostart/setup-keybinding.desktop".text = ''
@@ -155,6 +158,8 @@
   };
 
 
+
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -194,6 +199,56 @@
     # '')
   ];
 
+  services.syncthing = {
+    enable = true;
+  
+    # Override settings to prevent manual changes from persisting
+    overrideDevices = true;  # default: true
+    overrideFolders = true;  # default: true
+  
+    # Configure devices
+    settings = {
+      devices = {
+        "xiaomi-14t" = {
+          id = "D3VKOF2-5NGTXJM-I23JDTV-XV2ZRXL-JMSNNPA-W6LOL6F-PE3TU2S-G6JKNQ4";  # Get from Android app
+          # Optional: specify addresses
+          # addresses = [ "tcp://192.168.1.100:22000" ];
+        };
+      };
+  
+      # Configure folders
+      folders = {
+        "Org" = {
+          path = "~/Org";
+          id = "org";
+          devices = [ "xiaomi-14t" ];
+          # Optional folder type
+          # type = "sendreceive";  # or "sendonly", "receiveonly"
+        };
+      };
+  
+      # Optional: global options
+      options = {
+        urAccepted = -1;  # Disable usage reporting prompt
+        localAnnounceEnabled = true;
+        relaysEnabled = false;
+        globalAnnounceEnabled = false;
+
+      };
+    };
+  };
+
+  # Override the broken systemd service
+  systemd.user.services.syncthing = {
+    Service = {
+      ExecStart = lib.mkForce "${pkgs.syncthing}/bin/syncthing serve --no-browser --no-restart --no-upgrade --gui-address=127.0.0.1:8384";
+    };
+  };
+
+
+  services.flameshot = {
+    enable = true;
+  };
 
 
   # Ollama - Local LLM inference server
@@ -227,6 +282,8 @@
   home.file = {
     "home.nix".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/home-wb.nix;
     "dotfiles".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles;
+    ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink ~/Yandex.Disk/.emacs.d;
+    ".emacs".source = config.lib.file.mkOutOfStoreSymlink ~/dotfiles/emacs/.emacs;
   };
   
   fonts.fontconfig.enable = true;

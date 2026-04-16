@@ -241,7 +241,7 @@
 	  )
 
 	 ("q" "Ollama Question" entry (file+headline "~/Org/threads.org" "Now")
-          "** Question: %?\n:PROPERTIES:\n:GPTEL_MODEL: deepseek-v3.2:cloud\n:GPTEL_BACKEND: Ollama\n:GPTEL_TOPIC: question-%<%Y-%m-%d-%H-%M>:END:\n\n"
+          "** Question: %?\n:PROPERTIES:\n:GPTEL_MODEL: deepseek-v3.2:cloud\n:GPTEL_BACKEND: Ollama\n:GPTEL_TOPIC: question-%<%Y-%m-%d-%H-%M>\n:END:\n\n"
 	  :prepend t
 	  )
 	 	 
