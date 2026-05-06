@@ -17,6 +17,12 @@
 
 
   # Simple autostart - runs your script on login
+  # So GTK finds canberra-gtk-module (GNOME sets GTK_MODULES) — fixes DBeaver / other GTK apps on Nix
+  xdg.configFile."environment.d/99-gtk-canberra.conf".text = ''
+    [Environment]
+    GTK_PATH=${pkgs.libcanberra-gtk3}/lib/gtk-3.0
+  '';
+
   xdg.configFile."autostart/setup-keybinding.desktop".text = ''
     [Desktop Entry]
     Type=Application
@@ -180,11 +186,19 @@
     flameshot  # Screenshot tool with annotation
     libreoffice  # Office suite for documents/spreadsheets
     nextcloud-client  # Cloud storage sync client
+    libcanberra-gtk3  # GTK3 module canberra-gtk-module (base libcanberra has no gtk modules)
     wl-clipboard  # Command-line clipboard utilities for Wayland (wl-copy/wl-paste)
     ollama  # Local LLM runner for AI models
     noisetorch  # Real-time noise suppression for microphone
     ghq # Remote repository management made easy
-    dbeaver-bin
+    # DBeaver startup probes SWT WebKit; AT-SPI (atk-bridge) can segfault in gtk_widget_is_sensitive
+    # during that dispose path. NO_AT_BRIDGE=1 + disabling WebKit avoids it; GDK_BACKEND=x11 helps Wayland/EGL.
+    (writeShellScriptBin "dbeaver" ''
+      export GDK_BACKEND=x11
+      export NO_AT_BRIDGE=1
+      export JAVA_TOOL_OPTIONS="-Dorg.eclipse.swt.browser.UseWebKitGTK=false $JAVA_TOOL_OPTIONS"
+      exec ${dbeaver-bin}/bin/dbeaver "$@"
+    '')
     focuswriter
 
 
@@ -221,8 +235,8 @@
       devices = {
         "xiaomi-14t" = {
           id = "D3VKOF2-5NGTXJM-I23JDTV-XV2ZRXL-JMSNNPA-W6LOL6F-PE3TU2S-G6JKNQ4";  # Get from Android app
-          # Optional: specify addresses
-          # addresses = [ "tcp://192.168.1.100:22000" ];
+          # Force global discovery/relay path for cross-Wi-Fi connectivity.
+          addresses = [ "dynamic" ];
         };
       };
   
@@ -254,9 +268,32 @@
       # Optional: global options
       options = {
         urAccepted = -1;  # Disable usage reporting prompt
+        # Keep all discovery/transport methods enabled so syncing still works
+        # when LAN multicast is blocked or devices are on different Wi-Fi.
         localAnnounceEnabled = true;
+        globalAnnounceEnabled = true;
         relaysEnabled = true;
-        globalAnnounceEnabled = false;
+        natEnabled = true;
+        upnpEnabled = true;
+        # Keep TCP, QUIC, and relay enabled. Android clients often announce
+        # QUIC addresses, and disabling our QUIC listener makes mobile sync
+        # less reliable outside a simple LAN.
+        listenAddresses = [
+          "tcp://0.0.0.0:22000"
+          "quic://0.0.0.0:22000"
+          "dynamic+https://relays.syncthing.net/endpoint"
+        ];
+        # Avoid the default IPv6 announce endpoint on networks without IPv6.
+        globalAnnounceServers = [
+          "https://discovery-lookup.syncthing.net/v2/?noannounce"
+          "https://discovery-announce-v4.syncthing.net/v2/?nolookup"
+        ];
+        stunServers = [ "default" ];
+
+        # Prefer TCP/relay, but still allow QUIC for Android/mobile NAT cases.
+        connectionPriorityTcpWan = 30;
+        connectionPriorityRelay = 20;
+        connectionPriorityQuicWan = 50;
 
       };
     };
@@ -331,6 +368,7 @@
     FLAMESHOT = "flameshot";
     HOME = "/home/sidorov.filipp3";
     XDG_CONFIG_HOME = "$HOME/.config";
+    GTK_PATH = "${pkgs.libcanberra-gtk3}/lib/gtk-3.0";
   };
 
 
